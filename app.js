@@ -11,6 +11,11 @@ var todos = [{
     id: 2,
     description: "Go to market",
     completed: false
+},
+{
+    id: 3,
+    description: "Buy eggs",
+    completed: true
 }];
 
 app.get('/', function(req, res){
@@ -23,7 +28,16 @@ app.get('/todos', function(req, res){
 });
 
 //todos/:id
-//app.get('')
+app.get('/todos/:id', function(req, res){
+    var todoID = req.params.id;
+    //iterate over todos array. Find the match.
+    todos.forEach(function(todo){
+        if(todo.id == todoID){
+            res.send(todo);
+        }
+    })
+    res.status(404).send();
+});
 
 app.listen(PORT, function(){
     console.log("Listening on port " + PORT + "...");
