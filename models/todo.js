@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 module.exports = function(sequelize, DataTypes){
     return sequelize.define('todo', {
         description: {
@@ -11,6 +13,14 @@ module.exports = function(sequelize, DataTypes){
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false
+        }
+    },{
+        validate: {
+            descriptionIsString: function(){
+                if(!_.isString(this.description)){
+                    throw new Error('Description must be string.');
+                }
+            }
         }
     });
 }
