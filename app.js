@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var db = require('./db.js');
 var app = express();
 //process.env.PORT provided by heroku
 var PORT = process.env.PORT || 3000;
@@ -101,7 +102,8 @@ app.put('/todos/:id', function(req,res){
     res.status(200).send();
 });
 
-
-app.listen(PORT, function(){
-    console.log("Listening on port " + PORT + "...");
+db.sequelize.sync().then(function(){
+    app.listen(PORT, function(){
+        console.log("Listening on port " + PORT + "...");
+    });
 });
