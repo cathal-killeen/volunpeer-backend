@@ -52,15 +52,23 @@ app.get('/todos/:id', function(req, res){
 
 // post /todos
 app.post('/todos', function(req, res){
-    var body = req.body;
-    if(!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0){
-        return res.status(400).send();
-    }
-    body.description = body.description.trim();
-    body.id = todoNextId++;
-    body = _.pick(body, 'id', 'description', 'completed');
-    todos.push(body);
-    res.json(body);
+    var body = _.pick(req.body, 'description', 'completed');
+
+    db.todo.create(body)
+        .then(function(todo){
+            return res.status(200).json(todo.toJSON()).send();
+        }).catch(function(e){
+            return res.status(400).json(e).send();
+        });
+
+    // if(!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0){
+    //     return res.status(400).send();
+    // }
+    // body.description = body.description.trim();
+    // body.id = todoNextId++;
+    // body = _.pick(body, 'id', 'description', 'completed');
+    // todos.push(body);
+    // res.json(body);
 
 });
 
