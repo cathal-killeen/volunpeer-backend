@@ -1,7 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var bcrypt = require('bcrypt');
 var db = require('./db.js');
+
 var app = express();
 //process.env.PORT provided by heroku
 var PORT = process.env.PORT || 3000;
@@ -118,7 +120,7 @@ app.put('/todos/:id', function(req,res){
     });
 });
 
-app.post('/users', function(req,res){
+app.post('/user', function(req,res){
     var body = _.pick(req.body, 'email', 'password');
 
     db.user.create(body)
@@ -129,7 +131,17 @@ app.post('/users', function(req,res){
         });
 });
 
-db.sequelize.sync().then(function(){
+app.post('/user/login', function(req, res){
+    var body = _.pick(req.body, 'email', 'password');
+
+    db.user.authenticate(body).then(function(user){
+        res.json(user.toPublicJSON()).send();
+    }, function(){
+        res.status(401).send();
+    });
+});
+
+db.sequelize.sync({force: true}).then(function(){
     app.listen(PORT, function(){
         console.log("Listening on port " + PORT + "...");
     });
