@@ -69,6 +69,8 @@ app.get('/todos/:id', middleware.requireAuthentication, function(req, res){
 app.post('/todos', middleware.requireAuthentication, function(req, res){
     var body = _.pick(req.body, 'description', 'completed');
 
+    body.userId = req.user.dataValues.id;
+
     db.todo.create(body)
         .then(function(todo){
             return res.status(200).json(todo.toJSON()).send();
