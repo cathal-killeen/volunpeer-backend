@@ -22,9 +22,9 @@ app.get('/', function(req, res){
 //get request /todos?completed=true  q=search
 app.get('/todos', middleware.requireAuthentication, function(req, res){
     var query = req.query;
-    var where = {};
-
-    where.userId = req.user.dataValues.id;
+    var where = {
+        userId: req.user.dataValues.id
+    };
 
     if(query.hasOwnProperty('completed')){
         if(query.completed === 'true'){
@@ -59,7 +59,6 @@ app.get('/todos/:id', middleware.requireAuthentication, function(req, res){
         userId: req.user.dataValues.id
     }
 
-
     db.todo.findOne({
         where: where
     }).then(function(todo){
@@ -90,10 +89,14 @@ app.post('/todos', middleware.requireAuthentication, function(req, res){
 
 app.delete('/todos/:id', middleware.requireAuthentication, function(req,res){
     var todoID = parseInt(req.params.id, 10);
+    var where = {
+        id: req.params.id,
+        userId: req.user.dataValues.id
+    }
 
-    db.todo.destroy({ where: {
-        id: req.params.id
-    }}).then(function(rowsDeleted){
+    db.todo.destroy({
+        where: where
+    }).then(function(rowsDeleted){
         if(rowsDeleted === 0){
             return res.status(404).json({
                 error: "No todo with id " + todoID
@@ -117,7 +120,14 @@ app.put('/todos/:id', middleware.requireAuthentication, function(req,res){
         attributes.description = body.description;
     }
 
-    db.todo.findById(req.params.id).then(function(todo){
+    var where = {
+        id: req.params.id,
+        userId: req.user.dataValues.id
+    }
+
+    db.todo.findOne({
+        where: where
+    }).then(function(todo){
         if(todo){
             todo.update(attributes).then(function(todo){
                 res.json(todo.toJSON());
