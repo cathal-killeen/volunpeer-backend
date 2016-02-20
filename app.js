@@ -7,11 +7,9 @@ var db = require('./db.js');
 var middleware = require('./middleware.js')(db);
 
 var app = express();
+
 //process.env.PORT provided by heroku
 var PORT = process.env.PORT || 3000;
-var todos = [];
-
-var todoNextId = 1;
 
 app.use(bodyParser.json());
 
@@ -168,6 +166,15 @@ app.post('/user/login', function(req, res){
         res.header('Auth', tokenInstance.get('token')).json(userInstance.toPublicJSON()).send();
     }).catch(function(){
         res.status(401).send();
+    });
+});
+
+//DELETE login token
+app.delete('/user/login', middleware.requireAuthentication, function(req, res){
+    req.token.destroy().then(function() {
+        res.status(204).send();
+    }).catch(function(){
+        res.status(500).send();
     });
 });
 
