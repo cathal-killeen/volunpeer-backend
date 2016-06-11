@@ -13,6 +13,8 @@ var PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+app.use('/orgs', require('./routes/orgs')); //all orgs routes
+
 app.get('/', function(req, res){
     res.send('Volunpeer root');
 });
