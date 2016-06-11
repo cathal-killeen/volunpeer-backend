@@ -14,7 +14,7 @@ var PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 app.get('/', function(req, res){
-    res.send('Todo API root');
+    res.send('Volunpeer root');
 });
 
 //get request /todos?completed=true  q=search
